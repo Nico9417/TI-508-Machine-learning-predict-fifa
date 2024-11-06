@@ -1,13 +1,3 @@
-'''
-
-    TODO : 
-    - REFAIRE LA FONCTION MAIN ELLE NE VA PAS DU TOUT 
-    - AMÉLIORER L'ACCURACY DES MODÈLES ELLE EST TROP BASSE (ON DOIT TENDRE VERS 100 % OU PAS LOIN)
-    - FAIRE DES PLOTS 
-    - VOIR CE QU'ELLE A DEMANDÉ DANS LES CONSIGNES (PROJECT.PDF)
-
-'''
-
 # Import libraries needed 
 import pandas as pd
 import numpy as np
