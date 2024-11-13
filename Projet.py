@@ -17,6 +17,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import Normalizer
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 from sklearn import metrics
@@ -31,18 +32,39 @@ data['Position'] = data['Position'].str.strip()
 # Exclure les gardiens de but (GK) des données
 data = data[data['Position'] != 'GK']
 
+############################################ Rassemblement des positions #
+
+positions = {
+    "ATT": ["LW", "RW", "ST"],
+    "MID": ["CM", "CDM", "CAM", "LM", "RM"],
+    "DEF": ["LB", "RB", "CB"]
+}
+
+# Fonction pour mapper les positions
+def map_position(position):
+    for category, values in positions.items():
+        if position in values:
+            return category
+    return position  # Si la position n'est pas dans le dictionnaire, on la garde inchangée
+
+
 # Define features with more detailed stats than the base ones
 features = [
-    'PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY',              # Base stats on cards 
+    'PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY',               # Base stats on cards
     'Finishing', 'Heading Accuracy', 'Positioning',        # Attacking statistics 
     'Short Passing', 'Long Passing', 'Vision',             # Midfield statistics
     'Ball Control', 'Standing Tackle', 'Sliding Tackle',   # Defensive statistics
     'Interceptions', 'Acceleration', 'Sprint Speed',       # Additional recommended stats
-    'Agility', 'Balance', 'Stamina', 'Strength'            # Physical and agility stats
+    'Agility', 'Balance', 'Stamina', 'Strength'            # Physical and agility stats 
 ]
+'''
+Features supprimé:
+'''
 
 # Drop rows with missing values for any of the selected features
 data = data.dropna(subset=features)
+
+data['Position'] = data['Position'].apply(map_position)
 
 # Define features and label
 X = data[features] 
