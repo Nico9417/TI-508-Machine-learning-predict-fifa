@@ -47,6 +47,7 @@ def map_position(position):
             return category
     return position  # Si la position n'est pas dans le dictionnaire, on la garde inchangée
 
+data['Position'] = data['Position'].apply(map_position)
 
 # Define features with more detailed stats than the base ones
 features = [
@@ -64,7 +65,6 @@ Features supprimé:
 # Drop rows with missing values for any of the selected features
 data = data.dropna(subset=features)
 
-data['Position'] = data['Position'].apply(map_position)
 
 # Define features and label
 X = data[features] 
