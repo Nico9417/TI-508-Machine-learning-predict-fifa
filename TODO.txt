@@ -7,3 +7,5 @@
 - Revoir la gestion de la main fonction (c pas extra ) 
 - Voir les éventuels problèmes 
 - Revoir consignes si il manque des trucs 
+- Une fois le code finit (Jupiter notebook elle l'a demandé dans les consignes)
+
