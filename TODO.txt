@@ -1,0 +1,9 @@
+- Revoir evaluates model ce dont on a besoin ou pas en rajouter éventuellement avec ce qu’on a vu dans le cours 
+- L’affichage du best value KNN est à chier 
+- L’affichage des confusion Matrix se fait un par un (ça serait mieux de pouvoir les avoir les uns à coté des autres ) 
+- Dans les consignes veut bcp de plot 
+- Essayer d’améliorer l’accuracy 
+- Ajouter des commentaires
+- Revoir la gestion de la main fonction (c pas extra ) 
+- Voir les éventuels problèmes 
+- Revoir consignes si il manque des trucs 

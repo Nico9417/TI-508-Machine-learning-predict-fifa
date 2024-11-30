@@ -1,13 +1,3 @@
-'''
-
-    TODO : 
-    - REFAIRE LA FONCTION MAIN ELLE NE VA PAS DU TOUT 
-    - AMÉLIORER L'ACCURACY DES MODÈLES ELLE EST TROP BASSE (ON DOIT TENDRE VERS 100 % OU PAS LOIN)
-    - FAIRE DES PLOTS 
-    - VOIR CE QU'ELLE A DEMANDÉ DANS LES CONSIGNES (PROJECT.PDF)
-
-'''
-
 # Import libraries needed 
 import pandas as pd
 import numpy as np
@@ -23,16 +13,17 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 
 # Import data 
-file_path = './male_players.csv'
+file_path = '/Users/nico/Desktop/TI-508-Machine-learning-predict-fifa/Sans titre/male_players copy.csv'
 data = pd.read_csv(file_path)
 
-# Nettoyage des données : retirer les espaces autour des positions
+# Drop space around positions
 data['Position'] = data['Position'].str.strip()
 
-# Exclure les gardiens de but (GK) des données
+# Drop goalkeepers (GK) from the data
 data = data[data['Position'] != 'GK']
 
-############################################ Rassemblement des positions #
+#####################################################################
+# Positions mapping
 
 positions = {
     "ATT": ["LW", "RW", "ST"],
@@ -40,37 +31,34 @@ positions = {
     "DEF": ["LB", "RB", "CB"]
 }
 
-# Fonction pour mapper les positions
+# Function to map positions
 def map_position(position):
     for category, values in positions.items():
         if position in values:
             return category
-    return position  # Si la position n'est pas dans le dictionnaire, on la garde inchangée
+    return position  # If the position is not in the dictionary, it is kept unchanged
+   
 
 data['Position'] = data['Position'].apply(map_position)
 
-# Define features with more detailed stats than the base ones
+# Define features with more detailed stats than the basic ones
 features = [
-    'PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY',               # Base stats on cards
+    'PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY',              # Base stats on cards
     'Finishing', 'Heading Accuracy', 'Positioning',        # Attacking statistics 
     'Short Passing', 'Long Passing', 'Vision',             # Midfield statistics
     'Ball Control', 'Standing Tackle', 'Sliding Tackle',   # Defensive statistics
     'Interceptions', 'Acceleration', 'Sprint Speed',       # Additional recommended stats
-    'Agility', 'Balance', 'Stamina', 'Strength'            # Physical and agility stats 
+    'Agility', 'Balance', 'Stamina', 'Strength'            # Physical and agility stats   
 ]
-'''
-Features supprimé:
-'''
 
 # Drop rows with missing values for any of the selected features
 data = data.dropna(subset=features)
-
 
 # Define features and label
 X = data[features] 
 y = data['Position']
 
-# Normalize the features 
+# Standardize the features 
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
@@ -78,6 +66,11 @@ X = scaler.fit_transform(X)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Train multiple models and store them for future use
+# We decided to use the following models: 
+# KNN, 
+# Random Forest, 
+# SVM, 
+# Logistic Regression
 models = {
     'KNN': KNeighborsClassifier(n_neighbors=51),
     'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
@@ -92,7 +85,9 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
         y_pred = model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
         print(f"Accuracy of {model_name}: {accuracy * 100:.2f}%")
+        print("\n")
         print("Classification report:\n", classification_report(y_test, y_pred))
+        print("\n")
         print("Confusion matrix:\n", confusion_matrix(y_test, y_pred))
         print("\n" + "-"*50 + "\n")
 
@@ -116,7 +111,7 @@ def find_best_k(X_train, y_train, X_test, y_test):
     print("The best accuracy was with", mean_acc.max(), "with k=", mean_acc.argmax()+1)
 
 # Function to predict player's position based on their name and chosen model
-def predict_player_position(player_name, model, data, features, scaler):
+def predict_player_position(player_name, model, model_name, data, features, scaler):
     # Case-insensitive search for player's name
     player_data = data[data['Name'].str.contains(player_name, case=False, na=False)]
     
@@ -144,74 +139,119 @@ def predict_player_position(player_name, model, data, features, scaler):
     elif predicted_position in ["LB", "RB", "CB"]:
         predicted_position = "DEF"
 
-    print(f"The predicted position for {player_name} is: {predicted_position}")
+    print(f"The predicted position for {player_name} with {model_name} model is: {predicted_position}")
 
 
 # Main code
 if __name__ == "__main__":
-    # Evaluate models (décommenter cette ligne pour évaluer les modèles au démarrage)
-    # evaluate_models(models, X_train, X_test, y_train, y_test)
-
-    # Find best k for KNN 
-    # find_best_k(X_train, y_train, X_test, y_test)
-
     # Training the models before making predictions
     for model_name, model in models.items():
         model.fit(X_train, y_train)
 
-    while True:  
-        # Prompt user to select a player name for prediction
-        player_name = input("Enter the player's name to predict their position (or type 'exit' to quit): ")
+    def print_menu():
+        print("\n")
+        print("-----------------------------")
+        print("- Welcome in our project - : ")
+        print("-----------------------------")
+        print("\n")
+        print("1 - Search the position of the player")
+        print("2 - Evaluate models")
+        print("3 - Plot confusion matrices")
+        print("4 - Exit")
+        print("\n")
 
-        if player_name.lower() == 'exit':
+    while True:
+        print_menu()
+        choice = input("Enter your choice: ").strip()
+
+        if choice == '4':
             print("Exiting the program. Goodbye!")
-            break  # End if user input 'exit'
-
-        # Validate the player's name in a loop until a valid name is provided
-        while True:
-            player_data = data[data['Name'].str.contains(player_name, case=False, na=False)]
-            
-            if not player_data.empty:
-                print(f"Player '{player_name}' found. Proceeding to model selection.")
-                break  # Exit loop if player is found
-            else:
-                player_name = input("Player not found! Please enter a valid player's name (or type 'exit' to quit): ")
-                if player_name.lower() == 'exit':
-                    print("End of program!")
-                    break  # Exit if user input 'exit'
-
-        # If the user has chosen to exit, break out of the main loop
-        if player_name.lower() == 'exit':
             break
+        elif choice == '1':
+            while True:
+                player_name = input("Enter the player's name to predict their position (or type 'exit' to quit): ").strip()
 
-        # Display the menu for model selection
-        print("Select a model for prediction:")
-        print("1 - KNN")
-        print("2 - Random Forest")
-        print("3 - SVM")
-        print("4 - Logistic Regression (Softmax)")
-        print("5 - Find best value of k for KNN")
-        print("6 - Evaluate models")
+                if player_name.lower() == 'exit':
+                    print("Exiting the program. Goodbye!")
+                    break
 
-        # Secure input for model selection
-        model_choice = None
-        while model_choice not in ['1', '2', '3', '4', '5', '6']:
-            model_choice = input("Enter the number corresponding to the model: ")
-            if model_choice not in ['1', '2', '3', '4', '5', '6']:
-                print("Invalid choice. Please select a number between 1 and 6.")
+                # Validate the player's name
+                player_data = data[data['Name'].str.contains(player_name, case=False, na=False)]
 
-        # Execute the chosen option
-        if model_choice == '5':
-            find_best_k(X_train, y_train, X_test, y_test)
-        elif model_choice == '6':
+                if not player_data.empty:
+                    print(f"Player '{player_name}' found. Proceeding to model selection.")
+                    break  # Exit loop if player is found
+                else:
+                    print("Player not found! Please enter a valid player's name.")
+
+            # If the user has chosen to exit, break out of the main loop
+            if player_name.lower() == 'exit':
+                break
+
+            # Display the menu for model selection
+            print("Select a model for prediction:")
+            print("1 - Use KNN")
+            print("2 - Use Random Forest")
+            print("3 - Use SVM")
+            print("4 - Use Logistic Regression (Softmax)")
+            print("5 - Find best value of k for KNN")
+
+            # Secure input for model selection
+            model_choice = None
+            while model_choice not in ['1', '2', '3', '4', '5']:
+                model_choice = input("Enter the number corresponding to the model: ").strip()
+                if model_choice not in ['1', '2', '3', '4', '5']:
+                    print("Invalid choice. Please select a number between 1 and 5.")
+
+            # Execute the chosen option
+            if model_choice == '5':
+                find_best_k(X_train, y_train, X_test, y_test)
+            else:
+                # Mapping choices to their respective models
+                model_mapping = {
+                    '1': models['KNN'],
+                    '2': models['Random Forest'],
+                    '3': models['SVM'],
+                    '4': models['Logistic Regression (Softmax)']
+                }
+                model_name_mapping = {
+                    '1': 'KNN',
+                    '2': 'Random Forest',
+                    '3': 'SVM',
+                    '4': 'Logistic Regression (Softmax)'
+                }
+                
+                # Récupération du modèle sélectionné et de son nom
+                selected_model = model_mapping[model_choice]
+                selected_model_name = model_name_mapping[model_choice]
+                
+                # Appel à la prédiction avec les bons arguments
+                predict_player_position(player_name, selected_model, selected_model_name, data, features, scaler)
+        elif choice == '2':
             evaluate_models(models, X_train, X_test, y_train, y_test)
+        elif choice == '3':
+            # Plot confusion matrix for each model
+            for model_name, model in models.items():
+                y_pred = model.predict(X_test)
+                cm = confusion_matrix(y_test, y_pred)
+                plt.figure(figsize=(8, 6))
+                plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+                plt.title(f'Confusion Matrix for {model_name}')
+                plt.colorbar()
+                tick_marks = np.arange(len(set(y)))
+                plt.xticks(tick_marks, set(y), rotation=45)
+                plt.yticks(tick_marks, set(y))
+                plt.ylabel('True label')
+                plt.xlabel('Predicted label')
+
+                # Add text annotations
+                thresh = cm.max() / 2.
+                for i, j in np.ndindex(cm.shape):
+                    plt.text(j, i, format(cm[i, j], 'd'),
+                             horizontalalignment="center",
+                             color="white" if cm[i, j] > thresh else "black")
+
+                plt.tight_layout()
+                plt.show()
         else:
-            # Mapping choices to their respective models
-            model_mapping = {
-                '1': models['KNN'],
-                '2': models['Random Forest'],
-                '3': models['SVM'],
-                '4': models['Logistic Regression (Softmax)']
-            }
-            selected_model = model_mapping[model_choice]
-            predict_player_position(player_name, selected_model, data, features, scaler)
+            print("Invalid choice. Please select a valid option.")
