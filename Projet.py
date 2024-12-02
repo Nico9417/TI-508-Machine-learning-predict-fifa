@@ -72,9 +72,11 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Random Forest, 
 # SVM, 
 # Logistic Regression
+k_number=40
+Random_state_number = 42
 models = {
-    'KNN': KNeighborsClassifier(n_neighbors=40),
-    'Random Forest': RandomForestClassifier(n_estimators=300, random_state=42),
+    'KNN': KNeighborsClassifier(n_neighbors=k_number),
+    'Random Forest': RandomForestClassifier(n_estimators=300, random_state=Random_state_number),
     'SVM': SVC(kernel='linear', probability=True),
     'Logistic Regression (Softmax)': LogisticRegression(max_iter=200, multi_class='multinomial', solver='lbfgs')
 }
@@ -193,6 +195,12 @@ if __name__ == "__main__":
             model_choice = None
             while model_choice not in ['1', '2', '3', '4', '5']:
                 model_choice = input("Enter the number corresponding to the model: ").strip()
+                if model_choice == '1' :
+                    k_number = input("How many neighbors do you want:").strip()         
+                    break
+                if model_choice == '2' :
+                    Random_state_number = input("Put the random_state : ").strip()
+                    break 
                 if model_choice not in ['1', '2', '3', '4', '5']:
                     print("Invalid choice. Please select a number between 1 and 5.")
 
@@ -248,3 +256,4 @@ if __name__ == "__main__":
                 plt.show()
         else:
             print("Invalid choice. Please select a valid option.")
+            
