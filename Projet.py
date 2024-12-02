@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 
 # Import data 
-file_path = '/Users/nico/Desktop/TI-508-Machine-learning-predict-fifa/Sans titre/male_players copy.csv'
+file_path = 'male_players.csv'
 data = pd.read_csv(file_path)
 
 # Drop space around positions
@@ -43,12 +43,13 @@ data['Position'] = data['Position'].apply(map_position)
 
 # Define features with more detailed stats than the basic ones
 features = [
-    'PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY',              # Base stats on cards
-    'Finishing', 'Heading Accuracy', 'Positioning',        # Attacking statistics 
-    'Short Passing', 'Long Passing', 'Vision',             # Midfield statistics
-    'Ball Control', 'Standing Tackle', 'Sliding Tackle',   # Defensive statistics
-    'Interceptions', 'Acceleration', 'Sprint Speed',       # Additional recommended stats
-    'Agility', 'Balance', 'Stamina', 'Strength'            # Physical and agility stats   
+    'PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY', 'Acceleration', 'Sprint Speed',
+    'Positioning', 'Finishing', 'Shot Power', 'Long Shots', 'Volleys', 'Penalties',
+    'Vision', 'Crossing', 'Free Kick Accuracy', 'Short Passing', 'Long Passing',
+    'Curve', 'Dribbling', 'Agility', 'Balance', 'Reactions', 'Ball Control',
+    'Composure', 'Interceptions', 'Heading Accuracy', 'Def Awareness',
+    'Standing Tackle', 'Sliding Tackle', 'Jumping', 'Stamina', 'Strength',
+    'Aggression'
 ]
 
 # Drop rows with missing values for any of the selected features
@@ -72,8 +73,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # SVM, 
 # Logistic Regression
 models = {
-    'KNN': KNeighborsClassifier(n_neighbors=51),
-    'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
+    'KNN': KNeighborsClassifier(n_neighbors=40),
+    'Random Forest': RandomForestClassifier(n_estimators=300, random_state=42),
     'SVM': SVC(kernel='linear', probability=True),
     'Logistic Regression (Softmax)': LogisticRegression(max_iter=200, multi_class='multinomial', solver='lbfgs')
 }
@@ -130,14 +131,6 @@ def predict_player_position(player_name, model, model_name, data, features, scal
     
     # Extract first prediction if the result is an array
     predicted_position = predicted_position[0] if len(predicted_position) > 0 else predicted_position
-    
-    # Simplify predicted positions to broader categories
-    if predicted_position in ["ST", "LW", "RW"]:
-        predicted_position = "ATT"
-    elif predicted_position in ["CM", "CDM", "CAM", "LM", "RM"]:
-        predicted_position = "MID"
-    elif predicted_position in ["LB", "RB", "CB"]:
-        predicted_position = "DEF"
 
     print(f"The predicted position for {player_name} with {model_name} model is: {predicted_position}")
 
@@ -165,7 +158,7 @@ if __name__ == "__main__":
         choice = input("Enter your choice: ").strip()
 
         if choice == '4':
-            print("Exiting the program. Goodbye!")
+            find_best_k(X_train, y_train, X_test, y_test)
             break
         elif choice == '1':
             while True:
