@@ -9,3 +9,20 @@
 - Revoir consignes si il manque des trucs 
 - Une fois le code finit (Jupiter notebook elle l'a demandé dans les consignes)
 
+
+
+- Step 1 : Expliquer pk on prend ce dataset 
+
+- Step 2 : Bien définir le problem -> Être efficace dessus et bien cibler pourquoi classification (supervised learning ... , bref lui recracher le cours ) 
+
+- Step 3 : Reprendre le lien du datset original et montrer tout ce qu'il y avait genre les attributs limite expliquer en vif ce qu'une carte fifa et les attributs associés 
+
+- Step 4 : Reprendre dans le code tout ce qui a été fait pour transfo les données + tout ce qu'on a changé pour faire les algo (le excel où on a enlevé les colonnes, supprimer le gardien + tout le reste, éventuellemrnt dire pourquoiu on a STrandardiser et même tester dans le code avec d'autres formes genre normaliser ou autre voir et montrer que l'un ou l'autre c de la merde)
+
+- Step 5 : Pas spécialement capté je vous laisse faire 
+
+- Step 6 : J'ai pris ces algo là (faut les lire voir comment il marche) mais y'en a peut-être d'autre
+Il faudrait modifier la fction principale pour fixer le nombre de k dans knn ou le nombre de random state dans les autres pour pas que ça soit fixe 
+
+- Step 7 : Faire bcp de plot sur les résultats et bien expliquer notre accuracy ce qu'on a tenté de faire ... et faire des plot elle en veut 
+Et j'ai mis f1 score recall mais y'en a d'autre à implémenter du cours que j'vais mit sur insta.
