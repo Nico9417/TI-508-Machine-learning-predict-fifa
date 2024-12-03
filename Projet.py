@@ -1,6 +1,7 @@
 # Import libraries needed 
 import pandas as pd
 import numpy as np
+from sklearn.calibration import label_binarize
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -90,17 +91,37 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
         print(f"Accuracy of {model_name}: {accuracy * 100:.2f}%")
         print("\n")
         print("Classification report:\n", classification_report(y_test, y_pred))
-        print("\n")
-        print("Confusion matrix:\n", confusion_matrix(y_test, y_pred))
         print("\n" + "-"*50 + "\n")
-        
-        import seaborn as sns
-        import matplotlib.pyplot as plt     
+                
+        if model_name == 'Logistic Regression (Softmax)':
+            # Binarize the output
+            y_test_bin = label_binarize(y_test, classes=model.classes_)
+            n_classes = y_test_bin.shape[1]
 
-        disp = ConfusionMatrixDisplay(confusion_matrix=confusion_matrix(y_test, y_pred),  display_labels=model.classes_)
-        disp.plot()
-        plt.show()
-        
+            # Compute ROC curve and ROC area for each class
+            fpr = dict()
+            tpr = dict()
+            roc_auc = dict()
+            for i in range(n_classes):
+                fpr[i], tpr[i], _ = metrics.roc_curve(y_test_bin[:, i], model.predict_proba(X_test)[:, i])
+                roc_auc[i] = metrics.auc(fpr[i], tpr[i])
+
+            # Plot ROC curve for each class
+            plt.figure()
+            colors = ['aqua', 'darkorange', 'cornflowerblue']
+            pos = ['ATT', 'DEF', 'MID']
+            for i, color in zip(range(n_classes), colors):
+                plt.plot(fpr[i], tpr[i], color=color, lw=2,
+                        label=f'ROC curve of class {pos[i]} (area = {roc_auc[i]:.2f})')
+            plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.05])
+            plt.xlabel('False Positive Rate')
+            plt.ylabel('True Positive Rate')
+            plt.title('Receiver Operating Characteristic for multi-class')
+            plt.legend(loc="lower right")
+            plt.show()
+                
 
 # Function to determine the optimal K for KNN
 def find_best_k(X_train, y_train, X_test, y_test):
