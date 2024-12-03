@@ -8,7 +8,7 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import Normalizer
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 from sklearn import metrics
 
@@ -26,8 +26,8 @@ data = data[data['Position'] != 'GK']
 # Positions mapping
 
 positions = {
-    "ATT": ["LW", "RW", "ST"],
-    "MID": ["CM", "CDM", "CAM", "LM", "RM"],
+    "ATT": ["LW", "RW", "ST", "LM", "RM"],
+    "MID": ["CM", "CDM", "CAM"],
     "DEF": ["LB", "RB", "CB"]
 }
 
@@ -64,7 +64,7 @@ scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
 # Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffle=True)
 
 # Train multiple models and store them for future use
 # We decided to use the following models: 
@@ -72,13 +72,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Random Forest, 
 # SVM, 
 # Logistic Regression
-k_number=40
+k_number=12
 Random_state_number = 42
 models = {
     'KNN': KNeighborsClassifier(n_neighbors=k_number),
-    'Random Forest': RandomForestClassifier(n_estimators=300, random_state=Random_state_number),
+    'Random Forest': RandomForestClassifier(n_estimators=210, random_state=Random_state_number),
     'SVM': SVC(kernel='linear', probability=True),
-    'Logistic Regression (Softmax)': LogisticRegression(max_iter=200, multi_class='multinomial', solver='lbfgs')
+    'Logistic Regression (Softmax)': LogisticRegression(max_iter=150, multi_class='multinomial', solver='lbfgs')
 }
 
 # Function to train and evaluate each model
@@ -93,6 +93,14 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
         print("\n")
         print("Confusion matrix:\n", confusion_matrix(y_test, y_pred))
         print("\n" + "-"*50 + "\n")
+        
+        import seaborn as sns
+        import matplotlib.pyplot as plt     
+
+        disp = ConfusionMatrixDisplay(confusion_matrix=confusion_matrix(y_test, y_pred),  display_labels=model.classes_)
+        disp.plot()
+        plt.show()
+        
 
 # Function to determine the optimal K for KNN
 def find_best_k(X_train, y_train, X_test, y_test):
@@ -196,10 +204,10 @@ if __name__ == "__main__":
             while model_choice not in ['1', '2', '3', '4', '5']:
                 model_choice = input("Enter the number corresponding to the model: ").strip()
                 if model_choice == '1' :
-                    k_number = input("How many neighbors do you want:").strip()         
+                    k_number = input("How many neighbors do you want to test:").strip()         
                     break
                 if model_choice == '2' :
-                    Random_state_number = input("Put the random_state : ").strip()
+                    Random_state_number = input("Put the random_state hyperparameter: ").strip()
                     break 
                 if model_choice not in ['1', '2', '3', '4', '5']:
                     print("Invalid choice. Please select a number between 1 and 5.")
