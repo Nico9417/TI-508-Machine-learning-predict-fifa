@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 
 # Import data 
-file_path = 'male_players.csv'
+file_path = 'Predict-Fifa-ML-Dataset.csv'
 data = pd.read_csv(file_path)
 
 # Drop space around positions
@@ -61,7 +61,7 @@ X = data[features]
 y = data['Position']
 
 # Standardize the features 
-scaler = StandardScaler()
+scaler = Normalizer()
 X = scaler.fit_transform(X)
 
 # Split the data into training and testing sets
