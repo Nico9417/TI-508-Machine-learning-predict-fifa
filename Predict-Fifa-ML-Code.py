@@ -80,6 +80,7 @@ models = {
     'Random Forest': RandomForestClassifier(n_estimators=210, random_state=Random_state_number),
     'SVM': SVC(kernel='linear', probability=True),
     'Logistic Regression (Softmax)': LogisticRegression(max_iter=150, multi_class='multinomial', solver='lbfgs'),
+    'Bagging SVC Classifier': BaggingClassifier(estimator=SVC(kernel='linear', probability=True), n_estimators=210, random_state=42).fit(X_train, y_train)
 }
 
 # Function to train and evaluate each model
@@ -191,11 +192,6 @@ if __name__ == "__main__":
         if choice == '4':
             find_best_k(X_train, y_train, X_test, y_test)
             break
-        if choice == '10':
-            flc = BaggingClassifier(estimator=RandomForestClassifier(n_estimators=210, random_state=Random_state_number), n_estimators=210, random_state=42).fit(X_train, y_train)
-            y_pred = flc.predict(X_test)
-            accuracy = accuracy_score(y_test, y_pred)
-            print(f"Accuracy of {model_name}: {accuracy * 100:.2f}%")
         elif choice == '1':
             while True:
                 player_name = input("Enter the player's name to predict their position (or type 'exit' to quit): ").strip()
