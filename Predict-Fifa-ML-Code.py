@@ -80,7 +80,7 @@ models = {
     'Random Forest': RandomForestClassifier(n_estimators=210, random_state=Random_state_number),
     'SVM': SVC(kernel='linear', probability=True),
     'Logistic Regression (Softmax)': LogisticRegression(max_iter=150, multi_class='multinomial', solver='lbfgs'),
-    'Bagging SVC Classifier': BaggingClassifier(estimator=SVC(kernel='linear', probability=True), n_estimators=210, random_state=42).fit(X_train, y_train)
+    'Bagging SVC Classifier': BaggingClassifier(estimator=SVC(kernel='linear', probability=True), n_estimators=210, random_state=42)
 }
 
 # Function to train and evaluate each model
