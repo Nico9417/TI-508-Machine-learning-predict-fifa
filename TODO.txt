@@ -26,3 +26,20 @@ Il faudrait modifier la fction principale pour fixer le nombre de k dans knn ou 
 
 - Step 7 : Faire bcp de plot sur les résultats et bien expliquer notre accuracy ce qu'on a tenté de faire ... et faire des plot elle en veut 
 Et j'ai mis f1 score recall mais y'en a d'autre à implémenter du cours que j'vais mit sur insta.
+
+
+
+
+
+Maxime - intro (jusqu'à data describe)
+Nicolas - drop gardien + map position
+Gregoire - Distribution + corréllation
+Maxime - definir les features + Choix noramaliser + Train test split 
+Nicolas - Definir les modèles - evaluate modele
+Maxime - Find best K
+Gregoire - ROC / AUC
+
+Demo
+
+Nicolas - Conclusion
+
