@@ -166,12 +166,16 @@ def predict_player_position(player_name, model, model_name, data, features, scal
 
     print(f"The predicted position for {player_name} with {model_name} model is: {predicted_position}")
 
-
 # Main code
 if __name__ == "__main__":
-    # Training the models before making predictions
-    for model_name, model in models.items():
-        model.fit(X_train, y_train)
+    
+    # Start timer 
+    import time
+    start_time = time.time()
+
+    # End timer
+    print("--- Loaded in %s seconds ---" % (time.time() - start_time))
+
 
     def print_menu():
         print("\n")
@@ -220,6 +224,8 @@ if __name__ == "__main__":
             print("3 - Use SVM")
             print("4 - Use Logistic Regression (Softmax)")
             print("5 - Find best value of k for KNN")
+            
+            
 
             # Secure input for model selection
             model_choice = None
@@ -256,6 +262,8 @@ if __name__ == "__main__":
                 selected_model = model_mapping[model_choice]
                 selected_model_name = model_name_mapping[model_choice]
                 
+                selected_model.fit(X_train, y_train)
+                
                 # Appel à la prédiction avec les bons arguments
                 predict_player_position(player_name, selected_model, selected_model_name, data, features, scaler)
         elif choice == '2':
@@ -263,6 +271,8 @@ if __name__ == "__main__":
         elif choice == '3':
             # Plot confusion matrix for each model
             for model_name, model in models.items():
+                # Fit here
+                model.fit(X_train, y_train)
                 y_pred = model.predict(X_test)
                 cm = confusion_matrix(y_test, y_pred)
                 plt.figure(figsize=(8, 6))
